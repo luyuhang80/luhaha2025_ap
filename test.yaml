@@ -174,10 +174,10 @@ rules:
   - DOMAIN-KEYWORD,visa,DIRECT  # 防误拦截直连域名
 
   # 流媒体服务分流（次优先级）
-  - DOMAIN-SUFFIX,youtube.com,⚖️负载均衡
-  - DOMAIN-SUFFIX,googlevideo.com,⚖️负载均衡  # ✅ 必须代理
-  - DOMAIN-SUFFIX,ytimg.com,⚖️负载均衡       # ✅ 必须代理
-  - DOMAIN-SUFFIX,netflix.com,🚀自动选择
+  - DOMAIN-SUFFIX,youtube.com,负载均衡
+  - DOMAIN-SUFFIX,googlevideo.com,负载均衡  # ✅ 必须代理
+  - DOMAIN-SUFFIX,ytimg.com,负载均衡       # ✅ 必须代理
+  - DOMAIN-SUFFIX,netflix.com,自动选择
 
   # 精准广告拦截（低优先级）
   - DOMAIN-SUFFIX,doubleclick.net,REJECT     # 广告跟踪 [3](@ref)
