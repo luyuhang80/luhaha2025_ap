@@ -160,6 +160,8 @@ rule-providers:
 
 rules:
   # 广告拦截规则（最高优先级）
+  - DOMAIN-SUFFIX,googlevideo.com,REJECT  # 拦截视频流广告[3](@ref)
+  - DOMAIN-KEYWORD,doubleclick,REJECT     # 屏蔽广告跟踪[3](@ref)
   - RULE-SET,adblock,REJECT  # 基础广告过滤[1](@ref)
   - RULE-SET,anti-tracking,REJECT  # 隐私追踪拦截[7](@ref)
   - DOMAIN-KEYWORD,googlevideo.com,REJECT  # 拦截YouTube视频流广告域名
