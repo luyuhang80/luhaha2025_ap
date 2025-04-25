@@ -17,7 +17,7 @@ tun:
   auto-detect-interface: true
 
 # --- 节点订阅（Proxy Providers） ---
-proxy-providers:
+PROXY-PROVIDERS:
   mynodes:
     type: http
     url: "https://luhaha2024.dpdns.org/ecbd8f90-7b17-4f30-b5a9-c111af43a8d8?clash"
