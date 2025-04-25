@@ -8,9 +8,8 @@ global-client-fingerprint: chrome
 # ================== TUN 模式配置 ✅ ==================
 tun:
   enable: true
-  stack: system  # 或 gvisor（需内核支持）
-  device: utun    # 虚拟网卡名称（默认自动分配）
-  dns-hijack:    # 强制劫持 DNS
+  stack: system
+  dns-hijack:
     - 'any:53'
   auto-route: true
   auto-detect-interface: true
