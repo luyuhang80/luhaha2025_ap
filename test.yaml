@@ -25,6 +25,22 @@ dns:
     geoip-code: CN
     ipcidr:
       - 240.0.0.0/4
+      
+# ================== 去广告规则订阅 ==================
+rule-providers:
+  adblock:
+    type: http
+    behavior: domain
+    url: "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/BanAD.list"
+    path: ./profiles/rules/adblock.yaml
+    interval: 86400
+  
+  anti-ad:
+    type: http
+    behavior: domain
+    url: "https://anti-ad.net/clash.yaml"
+    path: ./profiles/rules/anti-ad.yaml
+    interval: 43200
 
 proxies:
 - name: CF_V8_usa.visa.com_443
