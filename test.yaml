@@ -1,11 +1,12 @@
-# ================== 核心配置 ==================
-port: 7890
+# 基本设置
+mixed-port: 7890
 allow-lan: true
 mode: rule
 log-level: info
-unified-delay: true
-global-client-fingerprint: chrome
-# ================== TUN 模式配置 ✅ ==================
+external-controller: 0.0.0.0:9090
+external-ui: ui
+
+# --- TUN 增强模式（可选） ---
 tun:
   enable: true
   device: meta
