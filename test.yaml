@@ -151,40 +151,15 @@ proxy-groups:
     - CF_V12_www.visa.com.br_2087
     - CF_V13_www.visasoutheasteurope.com_2096
 
-# ================== 去广告规则集成 ✅ ==================
+#YAML格式外部远程拦截域名规则集
 rule-providers:
   adblock:
     type: http
     behavior: domain
-    url: "https://cdn.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/BanAD.list"
-    path: ./rules/adblock.yaml
-    interval: 86400  # 每天更新
-
-  anti-tracking:
-    type: http
-    behavior: domain  
-    url: "https://anti-ad.net/clash.yaml"
-    path: ./rules/anti-tracking.yaml
-    interval: 43200  # 每12小时更新
-
+    format: yaml
+    url: https://raw.githubusercontent.com/REIJI007/AdBlock_Rule_For_Clash/main/adblock_reject.yaml
+    path: ./ruleset/adblock_reject.yaml
+    interval: 120
+    
 rules:
-  # 基础分流规则（最高优先级）
-  - GEOIP,LAN,DIRECT
-  - GEOIP,CN,DIRECT
-  - DOMAIN-KEYWORD,visa,DIRECT  # 防误拦截直连域名
-
-  # 流媒体服务分流（次优先级）
-  - DOMAIN-SUFFIX,youtube.com,负载均衡
-  - DOMAIN-SUFFIX,googlevideo.com,负载均衡  # ✅ 必须代理
-  - DOMAIN-SUFFIX,ytimg.com,负载均衡       # ✅ 必须代理
-  - DOMAIN-SUFFIX,netflix.com,自动选择
-
-  # 精准广告拦截（低优先级）
-  - DOMAIN-SUFFIX,doubleclick.net,REJECT     # 广告跟踪 [3](@ref)
-  - DOMAIN-SUFFIX,googleadservices.com,REJECT
-  - DOMAIN-SUFFIX,youtube-ui.l.google.com,REJECT  # 广告组件
-  - RULE-SET,adblock,REJECT                  # 需检查规则集内容 [7](@ref)
-  - RULE-SET,anti-tracking,REJECT
-
-  # 最终匹配规则
-  - MATCH,🌍选择代理
+  - RULE-SET,adblock,REJECT
