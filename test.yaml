@@ -1,105 +1,156 @@
-# ================== 核心配置 ==================
 port: 7890
 allow-lan: true
 mode: rule
 log-level: info
 unified-delay: true
 global-client-fingerprint: chrome
-external-controller: 0.0.0.0:9090
-external-ui: ui
-
-# ================== TUN 增强模式 ==================
-tun:
-  enable: true
-  device: meta
-  stack: system
-  dns-hijack:
-    - 'any:53'
-  auto-route: true
-  auto-detect-interface: true
-
-# ================== 节点订阅配置 ==================
-proxy-providers:
-  mynodes:
-    type: http
-    url: "https://luhaha2025.dpdns.org/ecbd8f90-7b17-4f30-b5a9-c111af43a8d8?clash"
-    path: ./profiles/proxies/mynodes.yaml
-    interval: 3600
-    health-check:  # 健康检查配置[1](@ref)
-      enable: true
-      url: http://www.gstatic.com/generate_204
-      interval: 300
-
-# ================== 去广告规则订阅 ==================
-rule-providers:
-  adblock:
-    type: http
-    behavior: domain
-    url: "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/BanAD.list"
-    path: ./profiles/rules/adblock.yaml
-    interval: 86400
-  
-  anti-ad:
-    type: http
-    behavior: domain
-    url: "https://anti-ad.net/clash.yaml"
-    path: ./profiles/rules/anti-ad.yaml
-    interval: 43200
-
-# ================== 代理组重构 ==================
-proxy-groups:
-  # 负载均衡组（轮询策略）[1](@ref)
-  - name: "⚖️负载均衡"
-    type: load-balance
-    strategy: round-robin
-    url: http://www.gstatic.com/generate_204
-    interval: 300
-    use: [mynodes]  # 动态引用订阅节点
-
-  # 自动选择组（延迟优先）
-  - name: "🚀自动选择"
-    type: url-test
-    url: http://www.gstatic.com/generate_204
-    interval: 300
-    tolerance: 50
-    use: [mynodes]
-
-  # 主选择组（层级清晰化）[7](@ref)
-  - name: "🌍选择代理"
-    type: select
-    proxies:
-      - "⚖️负载均衡"
-      - "🚀自动选择"
-      - DIRECT
-
-# ================== 流量规则 ==================
-rules:
-  - RULE-SET,adblock,REJECT  # 广告拦截规则[5](@ref)
-  - RULE-SET,anti-ad,REJECT
-  - GEOIP,LAN,DIRECT
-  - GEOIP,CN,DIRECT
-  # 关键域名分流规则[1](@ref)
-  - DOMAIN-SUFFIX,google.com,⚖️负载均衡
-  - DOMAIN-SUFFIX,youtube.com,⚖️负载均衡
-  - DOMAIN-SUFFIX,netflix.com,🚀自动选择
-  - DOMAIN-KEYWORD,visa,DIRECT  # 避免代理自身域名
-  - MATCH,🌍选择代理
-
-# ================== DNS 优化配置 ==================
 dns:
-  enable: true
-  listen: 0.0.0.0:53
+  enable: false
+  listen: :53
   ipv6: true
   enhanced-mode: fake-ip
   fake-ip-range: 198.18.0.1/16
+  default-nameserver: 
+    - 223.5.5.5
+    - 114.114.114.114
+    - 8.8.8.8
   nameserver:
     - https://dns.alidns.com/dns-query
     - https://doh.pub/dns-query
   fallback:
-    - tls://8.8.8.8:853
-    - tls://1.1.1.1:853
+    - https://1.0.0.1/dns-query
+    - tls://dns.google
   fallback-filter:
     geoip: true
     geoip-code: CN
     ipcidr:
       - 240.0.0.0/4
+
+proxies:
+- name: CF_V8_usa.visa.com_443
+  type: vless
+  server: usa.visa.com
+  port: 443
+  uuid: ecbd8f90-7b17-4f30-b5a9-c111af43a8d8
+  udp: false
+  tls: true
+  network: ws
+  servername: luhaha2025.dpdns.org
+  ws-opts:
+    path: "/?ed=2560"
+    headers:
+      Host: luhaha2025.dpdns.org
+
+- name: CF_V9_myanmar.visa.com_8443
+  type: vless
+  server: myanmar.visa.com
+  port: 8443
+  uuid: ecbd8f90-7b17-4f30-b5a9-c111af43a8d8
+  udp: false
+  tls: true
+  network: ws
+  servername: luhaha2025.dpdns.org
+  ws-opts:
+    path: "/?ed=2560"
+    headers:
+      Host: luhaha2025.dpdns.org
+
+- name: CF_V10_www.visa.com.tw_2053
+  type: vless
+  server: www.visa.com.tw
+  port: 2053
+  uuid: ecbd8f90-7b17-4f30-b5a9-c111af43a8d8
+  udp: false
+  tls: true
+  network: ws
+  servername: luhaha2025.dpdns.org
+  ws-opts:
+    path: "/?ed=2560"
+    headers:
+      Host: luhaha2025.dpdns.org
+
+- name: CF_V11_www.visaeurope.ch_2083
+  type: vless
+  server: www.visaeurope.ch
+  port: 2083
+  uuid: ecbd8f90-7b17-4f30-b5a9-c111af43a8d8
+  udp: false
+  tls: true
+  network: ws
+  servername: luhaha2025.dpdns.org
+  ws-opts:
+    path: "/?ed=2560"
+    headers:
+      Host: luhaha2025.dpdns.org
+
+- name: CF_V12_www.visa.com.br_2087
+  type: vless
+  server: www.visa.com.br
+  port: 2087
+  uuid: ecbd8f90-7b17-4f30-b5a9-c111af43a8d8
+  udp: false
+  tls: true
+  network: ws
+  servername: luhaha2025.dpdns.org
+  ws-opts:
+    path: "/?ed=2560"
+    headers:
+      Host: luhaha2025.dpdns.org
+
+- name: CF_V13_www.visasoutheasteurope.com_2096
+  type: vless
+  server: www.visasoutheasteurope.com
+  port: 2096
+  uuid: ecbd8f90-7b17-4f30-b5a9-c111af43a8d8
+  udp: false
+  tls: true
+  network: ws
+  servername: luhaha2025.dpdns.org
+  ws-opts:
+    path: "/?ed=2560"
+    headers:
+      Host: luhaha2025.dpdns.org
+
+proxy-groups:
+- name: 负载均衡
+  type: load-balance
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  proxies:
+    - CF_V8_usa.visa.com_443
+    - CF_V9_myanmar.visa.com_8443
+    - CF_V10_www.visa.com.tw_2053
+    - CF_V11_www.visaeurope.ch_2083
+    - CF_V12_www.visa.com.br_2087
+    - CF_V13_www.visasoutheasteurope.com_2096
+
+- name: 自动选择
+  type: url-test
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+  proxies:
+    - CF_V8_usa.visa.com_443
+    - CF_V9_myanmar.visa.com_8443
+    - CF_V10_www.visa.com.tw_2053
+    - CF_V11_www.visaeurope.ch_2083
+    - CF_V12_www.visa.com.br_2087
+    - CF_V13_www.visasoutheasteurope.com_2096
+
+- name: 🌍选择代理
+  type: select
+  proxies:
+    - 负载均衡
+    - 自动选择
+    - DIRECT
+    - CF_V8_usa.visa.com_443
+    - CF_V9_myanmar.visa.com_8443
+    - CF_V10_www.visa.com.tw_2053
+    - CF_V11_www.visaeurope.ch_2083
+    - CF_V12_www.visa.com.br_2087
+    - CF_V13_www.visasoutheasteurope.com_2096
+
+rules:
+  - GEOIP,LAN,DIRECT
+  - GEOIP,CN,DIRECT
+  - MATCH,🌍选择代理
