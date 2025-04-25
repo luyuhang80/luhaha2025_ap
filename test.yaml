@@ -1,12 +1,14 @@
-# 基本设置
-mixed-port: 7890
+# ================== 核心配置 ==================
+port: 7890
 allow-lan: true
 mode: rule
 log-level: info
+unified-delay: true
+global-client-fingerprint: chrome
 external-controller: 0.0.0.0:9090
 external-ui: ui
 
-# --- TUN 增强模式（可选） ---
+# ================== TUN 增强模式 ==================
 tun:
   enable: true
   device: meta
@@ -16,37 +18,91 @@ tun:
   auto-route: true
   auto-detect-interface: true
 
-# --- 节点订阅（Proxy Providers） ---
+# ================== 节点订阅配置 ==================
 proxy-providers:
   mynodes:
     type: http
-    url: "https://luhaha2025.dpdns.org/ecbd8f90-7b17-4f30-b5a9-c111af43a8d8/pcl"
+    url: "https://luhaha2025.dpdns.org/ecbd8f90-7b17-4f30-b5a9-c111af43a8d8?clash"
     path: ./profiles/proxies/mynodes.yaml
     interval: 3600
-    filter: "HK|JP|US"
-    health-check:
+    health-check:  # 健康检查配置[1](@ref)
       enable: true
       url: http://www.gstatic.com/generate_204
       interval: 300
 
-proxy-groups:
-  - name: "PROXY"
-    type: select
-    use: 
-      - mynodes  # 直接引用 proxy-providers 的名称
-    proxies:
-      - DIRECT   # 保留直连选项
-
-# --- 去广告规则订阅（Rule Providers） ---
+# ================== 去广告规则订阅 ==================
 rule-providers:
-  youtubeAds:
+  adblock:
     type: http
     behavior: domain
-    url: "https://raw.githubusercontent.com/Rasta0501/clash-youtube-rules/main/youtube-rule-set.yaml"
-    path: ./profiles/rules/youtube-rule-set.yaml
+    url: "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/BanAD.list"
+    path: ./profiles/rules/adblock.yaml
     interval: 86400
+  
+  anti-ad:
+    type: http
+    behavior: domain
+    url: "https://anti-ad.net/clash.yaml"
+    path: ./profiles/rules/anti-ad.yaml
+    interval: 43200
 
-# --- 转发规则 ---
+# ================== 代理组重构 ==================
+proxy-groups:
+  # 负载均衡组（轮询策略）[1](@ref)
+  - name: "⚖️负载均衡"
+    type: load-balance
+    strategy: round-robin
+    url: http://www.gstatic.com/generate_204
+    interval: 300
+    use: [mynodes]  # 动态引用订阅节点
+
+  # 自动选择组（延迟优先）
+  - name: "🚀自动选择"
+    type: url-test
+    url: http://www.gstatic.com/generate_204
+    interval: 300
+    tolerance: 50
+    use: [mynodes]
+
+  # 主选择组（层级清晰化）[7](@ref)
+  - name: "🌍选择代理"
+    type: select
+    proxies:
+      - "⚖️负载均衡"
+      - "🚀自动选择"
+      - DIRECT
+      # 静态节点兜底（示例）
+      - CF_V8_usa.visa.com_443
+      - CF_V9_myanmar.visa.com_8443
+
+# ================== 流量规则 ==================
 rules:
-  - RULE-SET,youtubeAds,REJECT
-  - MATCH,PROXY
+  - RULE-SET,adblock,REJECT  # 广告拦截规则[5](@ref)
+  - RULE-SET,anti-ad,REJECT
+  - GEOIP,LAN,DIRECT
+  - GEOIP,CN,DIRECT
+  # 关键域名分流规则[1](@ref)
+  - DOMAIN-SUFFIX,google.com,⚖️负载均衡
+  - DOMAIN-SUFFIX,youtube.com,⚖️负载均衡
+  - DOMAIN-SUFFIX,netflix.com,🚀自动选择
+  - DOMAIN-KEYWORD,visa,DIRECT  # 避免代理自身域名
+  - MATCH,🌍选择代理
+
+# ================== DNS 优化配置 ==================
+dns:
+  enable: true
+  listen: 0.0.0.0:53
+  ipv6: true
+  enhanced-mode: fake-ip
+  fake-ip-range: 198.18.0.1/16
+  nameserver:
+    - https://dns.alidns.com/dns-query
+    - https://doh.pub/dns-query
+  fallback:
+    - tls://8.8.8.8:853
+    - tls://1.1.1.1:853
+  fallback-filter:
+    geoip: true
+    geoip-code: CN
+    ipcidr:
+      - 240.0.0.0/4
