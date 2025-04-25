@@ -5,7 +5,15 @@ mode: rule
 log-level: info
 unified-delay: true
 global-client-fingerprint: chrome
-
+# ================== TUN 模式配置 ✅ ==================
+tun:
+  enable: true ✅
+  stack: system ✅
+  dns-hijack: ✅
+    - 'any:53'  # 劫持所有DNS查询
+  auto-route: true ✅
+  auto-detect-interface: true ✅
+  device: utun ✅
 # ================== DNS 配置 ✅ ==================
 dns:
   enable: true  # 必须启用DNS服务
@@ -153,7 +161,11 @@ rules:
   # 广告拦截规则（最高优先级）
   - RULE-SET,adblock,REJECT  # 基础广告过滤[1](@ref)
   - RULE-SET,anti-tracking,REJECT  # 隐私追踪拦截[7](@ref)
-
+  - DOMAIN-KEYWORD,googlevideo.com,REJECT  # 拦截YouTube视频流广告域名
+  - DOMAIN-SUFFIX,doubleclick.net,REJECT   # 拦截Google广告服务
+  - DOMAIN-SUFFIX,ytimg.com,REJECT  # 拦截 YouTube 图片广告
+  - DOMAIN-SUFFIX,youtube-ui.l.google.com,REJECT
+  - DOMAIN-SUFFIX,googleadservices.com,REJECT
   # 基础分流规则
   - GEOIP,LAN,DIRECT
   - GEOIP,CN,DIRECT
