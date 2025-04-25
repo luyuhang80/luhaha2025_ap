@@ -168,26 +168,23 @@ rule-providers:
     interval: 43200  # 每12小时更新
 
 rules:
-  # 广告拦截规则（最高优先级）
-  - DOMAIN-SUFFIX,googlevideo.com,REJECT  # 拦截视频流广告[3](@ref)
-  - DOMAIN-KEYWORD,doubleclick,REJECT     # 屏蔽广告跟踪[3](@ref)
-  - RULE-SET,adblock,REJECT  # 基础广告过滤[1](@ref)
-  - RULE-SET,anti-tracking,REJECT  # 隐私追踪拦截[7](@ref)
-  - DOMAIN-KEYWORD,googlevideo.com,REJECT  # 拦截YouTube视频流广告域名
-  - DOMAIN-SUFFIX,doubleclick.net,REJECT   # 拦截Google广告服务
-  - DOMAIN-SUFFIX,ytimg.com,REJECT  # 拦截 YouTube 图片广告
-  - DOMAIN-SUFFIX,youtube-ui.l.google.com,REJECT
-  - DOMAIN-SUFFIX,googleadservices.com,REJECT
-  # 基础分流规则
+  # 基础分流规则（最高优先级）
   - GEOIP,LAN,DIRECT
   - GEOIP,CN,DIRECT
+  - DOMAIN-KEYWORD,visa,DIRECT  # 防误拦截直连域名
 
-  # Visa域名直连（防误拦截）
-  - DOMAIN-KEYWORD,visa,DIRECT  
-
-  # 流媒体优化分流
-  - DOMAIN-SUFFIX,netflix.com,🚀自动选择
+  # 流媒体服务分流（次优先级）
   - DOMAIN-SUFFIX,youtube.com,⚖️负载均衡
+  - DOMAIN-SUFFIX,googlevideo.com,⚖️负载均衡  # ✅ 必须代理
+  - DOMAIN-SUFFIX,ytimg.com,⚖️负载均衡       # ✅ 必须代理
+  - DOMAIN-SUFFIX,netflix.com,🚀自动选择
+
+  # 精准广告拦截（低优先级）
+  - DOMAIN-SUFFIX,doubleclick.net,REJECT     # 广告跟踪 [3](@ref)
+  - DOMAIN-SUFFIX,googleadservices.com,REJECT
+  - DOMAIN-SUFFIX,youtube-ui.l.google.com,REJECT  # 广告组件
+  - RULE-SET,adblock,REJECT                  # 需检查规则集内容 [7](@ref)
+  - RULE-SET,anti-tracking,REJECT
 
   # 最终匹配规则
   - MATCH,🌍选择代理
