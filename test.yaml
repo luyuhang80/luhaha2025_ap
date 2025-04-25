@@ -7,13 +7,13 @@ unified-delay: true
 global-client-fingerprint: chrome
 # ================== TUN 模式配置 ✅ ==================
 tun:
-  enable: true ✅
-  stack: system ✅
-  dns-hijack: ✅
-    - 'any:53'  # 劫持所有DNS查询
-  auto-route: true ✅
-  auto-detect-interface: true ✅
-  device: utun ✅
+  enable: true
+  stack: system  # 或 gvisor（需内核支持）
+  device: utun    # 虚拟网卡名称（默认自动分配）
+  dns-hijack:    # 强制劫持 DNS
+    - 'any:53'
+  auto-route: true
+  auto-detect-interface: true
 # ================== DNS 配置 ✅ ==================
 dns:
   enable: true  # 必须启用DNS服务
