@@ -20,7 +20,7 @@ tun:
 proxy-providers:
   mynodes:
     type: http
-    url: "https://luhaha2024.dpdns.org/ecbd8f90-7b17-4f30-b5a9-c111af43a8d8?sub"
+    url: "https://luhaha2024.dpdns.org/ecbd8f90-7b17-4f30-b5a9-c111af43a8d8?clash"
     path: ./profiles/proxies/mynodes.yaml
     interval: 3600
     filter: "HK|JP|US"
