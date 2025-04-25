@@ -8,6 +8,7 @@ global-client-fingerprint: chrome
 # ================== TUN 模式配置 ✅ ==================
 tun:
   enable: true
+  device: meta
   stack: system
   dns-hijack:
     - 'any:53'
