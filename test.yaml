@@ -1,0 +1,51 @@
+# 基本设置
+mixed-port: 7890
+allow-lan: true
+mode: rule
+log-level: info
+external-controller: 0.0.0.0:9090
+external-ui: ui
+
+# --- TUN 增强模式（可选） ---
+tun:
+  enable: true
+  device: meta
+  stack: system
+  dns-hijack:
+    - 'any:53'
+  auto-route: true
+  auto-detect-interface: true
+
+# --- 节点订阅（Proxy Providers） ---
+proxy-providers:
+  mynodes:
+    type: http
+    url: "https://example.com/your_subscribe_link.yaml"
+    path: ./profiles/proxies/mynodes.yaml
+    interval: 3600
+    filter: "HK|JP|US"
+    health-check:
+      enable: true
+      url: http://www.gstatic.com/generate_204
+      interval: 300
+
+proxy-groups:
+  - name: "PROXY"
+    type: select
+    proxies:
+      - "PROXY-PROVIDERS,mynodes"
+      - DIRECT
+
+# --- 去广告规则订阅（Rule Providers） ---
+rule-providers:
+  youtubeAds:
+    type: http
+    behavior: domain
+    url: "https://raw.githubusercontent.com/Rasta0501/clash-youtube-rules/main/youtube-rule-set.yaml"
+    path: ./profiles/rules/youtube-rule-set.yaml
+    interval: 86400
+
+# --- 转发规则 ---
+rules:
+  - RULE-SET,youtubeAds,REJECT
+  - MATCH,PROXY
