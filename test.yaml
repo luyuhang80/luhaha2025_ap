@@ -32,9 +32,10 @@ proxy-providers:
 proxy-groups:
   - name: "PROXY"
     type: select
+    use: 
+      - mynodes  # 直接引用 proxy-providers 的名称
     proxies:
-      - "PROXY-PROVIDERS,mynodes"
-      - DIRECT
+      - DIRECT   # 保留直连选项
 
 # --- 去广告规则订阅（Rule Providers） ---
 rule-providers:
