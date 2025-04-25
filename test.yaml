@@ -151,11 +151,6 @@ proxy-groups:
     - CF_V12_www.visa.com.br_2087
     - CF_V13_www.visasoutheasteurope.com_2096
 
-rules:
-  - GEOIP,LAN,DIRECT
-  - GEOIP,CN,DIRECT
-  - MATCH,🌍选择代理
-
 # ================== 去广告规则集成 ✅ ==================
 rule-providers:
   adblock:
